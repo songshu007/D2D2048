@@ -1,0 +1,17 @@
+====================================================================
+TIME: 2022/9/24 12:49:18
+AI GO
+FAILED:   File: C:\Users\Lenovo\source\repos\D2D2048_V2\D2D2048_V2\Direct2dApp\Direct2dApp.cpp  Line: 289  Vaule: -2003238911  [12:49:19]
+====================================================================
+TIME: 2022/9/24 12:53:51
+AI GO
+FAILED:   File: C:\Users\Lenovo\source\repos\D2D2048_V2\D2D2048_V2\Direct2dApp\Direct2dApp.cpp  Line: 289  Vaule: -2003238911  [12:53:51]
+====================================================================
+TIME: 2022/9/24 12:54:23
+AI GO
+FAILED:   File: C:\Users\Lenovo\source\repos\D2D2048_V2\D2D2048_V2\Direct2dApp\Direct2dApp.cpp  Line: 289  Vaule: -2003238911  [12:54:23]
+TIME: 2022/9/24 12:54:47   2048 Reset! GameOver!
+====================================================================
+TIME: 2022/9/24 13:0:33
+AI GO
+FAILED:   File: C:\Users\Lenovo\source\repos\D2D2048_V2\D2D2048_V2\Direct2dApp\Direct2dApp.cpp  Line: 289  Vaule: -2003238911  [13:0:33]
