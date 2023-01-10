@@ -336,7 +336,24 @@ void Board::Updata(float dt)
 		m_rt.Clear(shu::color4f(shu::Color::Orange, 0.5f));
 
 		m_rt.DrawTextCenter(
-			L"\"R\": 重试\n\"F\": 全屏\n\"H\": 帮助\n\"T\": 测试", 
+			L"\"R\": 重试\n\"F\": 全屏\n\"H\": 帮助", 
+			shu::vec2f(0.0f, 0.0f), m_rt.GetSize(), shu::Color::White, min(m_rt.GetSize().x, m_rt.GetSize().y) * 0.1f);
+
+		m_rt.GetDC().EndDraw();
+	}
+
+	// 胜利
+	if (this->isWin() == true && is_first_win == true)
+	{
+		if (shu::InputKey::IsAnyKeyPress() && is_first_win_frame != true) is_first_win = false;
+		is_first_win_frame = false;
+
+		m_rt.GetDC().SetTarget(m_layer_3);
+		m_rt.BeginDraw();
+		m_rt.Clear(shu::color4f(shu::Color::Orange, 0.5f));
+
+		m_rt.DrawTextCenter(
+			L"You Win!!\n按任意键以继续",
 			shu::vec2f(0.0f, 0.0f), m_rt.GetSize(), shu::Color::White, min(m_rt.GetSize().x, m_rt.GetSize().y) * 0.1f);
 
 		m_rt.GetDC().EndDraw();
@@ -515,6 +532,8 @@ void Board::Reset()
 {
 	this->m_score = 0;
 	GameStatus = STATIC;
+	is_first_win = true;
+	is_first_win_frame = true;
 
 	for (size_t y = 0; y < m_rows; y++)
 		for (size_t x = 0; x < m_cols; x++)
@@ -539,6 +558,24 @@ void Board::Test()
 void Board::OpenAnimation(bool flag)
 {
 	m_animation_switch = flag;
+}
+
+bool Board::isWin()
+{
+	return this->_isWin(m_board, m_rows, m_cols);
+}
+
+bool Board::_isWin(int** board, int rows, int cols)
+{
+	for (int y = 0; y < rows; y++)
+	{
+		for (int x = 0; x < cols; x++)
+		{
+			if (board[y][x] >= 11) return true;
+		}
+	}
+
+	return false;
 }
 
 void Board::RandCreateCell(int** board, int rows, int cols)

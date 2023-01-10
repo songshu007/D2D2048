@@ -17,6 +17,7 @@ namespace shu
 
 		virtual bool OnUserCreate() { return true; };
 		virtual bool OnUserUpdata(float dt) { return true; };
+		virtual bool OnMenuUpdata(WORD options) { return true; };	// 当菜单被点击时
 		virtual bool OnDisCreate() { return true; };
 
 		Direct2dRender& GetRT();
@@ -25,12 +26,13 @@ namespace shu
 		Direct2dRender m_rt;
 		uint32_t GetFPS();
 		vec2f& GetMousePos();
+		HWND m_hwnd;
+		HINSTANCE m_hInstance;
 
 
 	private:
 		static GameEngine* m_ptr;
 
-		HWND m_hwnd;
 
 		std::wstring m_ClassName;
 		std::wstring m_WindowName;
@@ -55,7 +57,6 @@ namespace shu
 		// 以下是私有函数声明
 		static LRESULT WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		void MessageLoop();
-		void RenderLoop();
 		HWND _CreateWindow(vec2i size, long style);
 		void CoreUpdata();
 

@@ -19,22 +19,22 @@ typedef float (*SizeAnimationFun)(float);
 
 static float easeInOutQuart(float t)
 {
-	return t < 0.5 ? 8 * t * t * t * t : 1 - pow(-2 * t + 2, 4) / 2;
+	return float(t < 0.5 ? 8 * t * t * t * t : 1 - pow(-2 * t + 2, 4) / 2);
 }
 static float easeInOutBack(float t)
 {
 	const float c1 = 1.70158;
 	const float c2 = c1 * 1.525;
 
-	return t < 0.5
+	return float(t < 0.5
 		? (pow(2 * t, 2) * ((c2 + 1) * 2 * t - c2)) / 2
-		: (pow(2 * t - 2, 2) * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2;
+		: (pow(2 * t - 2, 2) * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2);
 }
 static float easeInOutCirc(float t)
 {
-	return t < 0.5
+	return float(t < 0.5
 		? (1 - sqrt(1 - pow(2 * t, 2))) / 2
-		: (sqrt(1 - pow(-2 * t + 2, 2)) + 1) / 2;
+		: (sqrt(1 - pow(-2 * t + 2, 2)) + 1) / 2);
 }
 static float easeOutElastic(float t)
 {
@@ -63,6 +63,7 @@ public:
 	int  GetSocre();					// 获取分数
 	void Test();
 	void OpenAnimation(bool flag);		// 打开或关闭动画
+	bool isWin();
 
 	void Updata(float dt);
 	void Render(shu::Direct2dRender& rt, bool is_black_white);
@@ -77,6 +78,7 @@ public:
 	ANIMATION_SPEED_MODE m_animation_speed_mode = NORMAL;
 
 private:
+	bool _isWin(int** board, int rows, int cols);	// 是否胜利
 
 	// 画一个棋子
 	void DrawCell(int num, const shu::vec2f& pos, float size, shu::Direct2dRender& rt);
@@ -148,6 +150,10 @@ private:
 	size_t m_rows = 0;	// 行
 	size_t m_cols = 0;	// 列
 	int m_score = 0; // 分数
+
+	bool is_win = true;
+	bool is_first_win = true;
+	bool is_first_win_frame = true;
 
 	Clock animation_clock;
 	Clock size_animation_clock;

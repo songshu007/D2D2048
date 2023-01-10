@@ -43,9 +43,9 @@ bool shu::GameEngine::Init(std::wstring className, std::wstring wndName, vec2i s
 
 void shu::GameEngine::Start()
 {
-	std::thread t(&GameEngine::RenderLoop, this);
+	//std::thread t(&GameEngine::RenderLoop, this);
 	MessageLoop();
-	t.join();
+	//t.join();
 	OnDisCreate();
 }
 
@@ -106,6 +106,11 @@ LRESULT shu::GameEngine::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 		ptr.m_MousePos.y = HIWORD(lParam);
 		break;
 	}
+	case WM_COMMAND:
+	{
+		ptr.OnMenuUpdata(LOWORD(wParam));
+		break;
+	}
 	}
 
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -114,46 +119,22 @@ LRESULT shu::GameEngine::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 void shu::GameEngine::MessageLoop()
 {
 	MSG msg = { 0 };
-	while (GetMessageW(&msg, NULL, 0, 0))
+	for (;;)
 	{
-		TranslateMessage(&msg);
-		DispatchMessageW(&msg);
-	}
-
-	//MSG msg = { 0 };
-	//for (;;)
-	//{
-	//	if (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE))
-	//	{
-	//		if (msg.message == WM_QUIT) break;
-	//		TranslateMessage(&msg);
-	//		DispatchMessageW(&msg);
-	//	}
-	//	else
-	//	{
-	//		if (GetForegroundWindow() != m_hwnd)
-	//		{
-	//			// 防止最小化时CPU爆炸，你懂的
-	//			Sleep(5);
-	//		}
-	//		CoreUpdata();
-
-	//		OnUserUpdata(m_dt);
-	//	}
-	//}
-}
-
-void shu::GameEngine::RenderLoop()
-{
-	while (isClose == false)
-	{
-		if (GetForegroundWindow() != m_hwnd)
+		if (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE))
 		{
-			// 防止最小化时CPU爆炸，你懂的
-			Sleep(5);
+			if (msg.message == WM_QUIT) break;
+			TranslateMessage(&msg);
+			DispatchMessageW(&msg);
 		}
-		CoreUpdata();
-		OnUserUpdata(m_dt);
+		else
+		{
+			// 防止最小化窗口时CPU爆炸
+			if (IsIconic(m_hwnd)) Sleep(1);
+
+			CoreUpdata();
+			OnUserUpdata(m_dt);
+		}
 	}
 }
 
@@ -161,11 +142,11 @@ HWND shu::GameEngine::_CreateWindow(vec2i size, long style)
 {
 	HWND hwnd = nullptr;
 	WNDCLASSEXW wic;
-	HINSTANCE hInstance = GetModuleHandleW(NULL);
+	m_hInstance = GetModuleHandleW(NULL);
 	memset(&wic, 0, sizeof(wic));
 	wic.cbSize = sizeof(WNDCLASSEX);
 	wic.hCursor = LoadCursor(0, IDC_ARROW);
-	wic.hInstance = hInstance;
+	wic.hInstance = m_hInstance;
 	wic.lpszClassName = m_ClassName.c_str();
 	wic.lpfnWndProc = (WNDPROC)WindowProc;
 	wic.style = CS_HREDRAW | CS_VREDRAW;
@@ -180,7 +161,7 @@ HWND shu::GameEngine::_CreateWindow(vec2i size, long style)
 	rect.top = 0;
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 
-	hwnd = CreateWindowEx(0, (LPCWSTR)m_ClassName.c_str(), (LPCWSTR)m_WindowName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, rect.right - rect.left, rect.bottom - rect.top, NULL, NULL, hInstance, NULL);
+	hwnd = CreateWindowEx(0, (LPCWSTR)m_ClassName.c_str(), (LPCWSTR)m_WindowName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, rect.right - rect.left, rect.bottom - rect.top, NULL, NULL, m_hInstance, NULL);
 	return hwnd;
 }
 

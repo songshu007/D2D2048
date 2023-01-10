@@ -86,7 +86,7 @@ namespace shu
 		HWND m_hwnd;
 		vec2f m_size;
 
-		ComPtr<ID2D1Multithread> m_D2DMultithread;
+		//ComPtr<ID2D1Multithread> m_D2DMultithread;
 
 		ComPtr<ID2D1SolidColorBrush> m_Brush;
 

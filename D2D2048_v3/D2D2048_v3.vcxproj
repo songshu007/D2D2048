@@ -145,26 +145,36 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="D:\sdk\我的库\GameEngine\GameEngine\Clock.cpp" />
-    <ClCompile Include="D:\sdk\我的库\GameEngine\GameEngine\GameEngine.cpp" />
-    <ClCompile Include="D:\sdk\我的库\GameEngine\GameEngine\InputKey.cpp" />
-    <ClCompile Include="D:\sdk\我的库\GameEngine\GameEngine\LogSys.cpp" />
-    <ClCompile Include="D:\sdk\我的库\GameEngine\GameEngine\Render.cpp" />
-    <ClCompile Include="D:\sdk\我的库\GameEngine\GameEngine\Resource.cpp" />
-    <ClCompile Include="src\NetWorkUpdata.cpp" />
+    <ClCompile Include="include\GameEngine\Clock.cpp" />
+    <ClCompile Include="include\GameEngine\GameEngine.cpp" />
+    <ClCompile Include="include\GameEngine\InputKey.cpp" />
+    <ClCompile Include="include\GameEngine\LogSys.cpp" />
+    <ClCompile Include="include\GameEngine\Render.cpp" />
+    <ClCompile Include="include\GameEngine\Resource.cpp" />
+    <ClCompile Include="src\GameData.cpp" />
+    <ClCompile Include="src\Snow.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Board.cpp" />
+    <ClCompile Include="src\Thread_pool.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="D:\sdk\我的库\GameEngine\GameEngine\Clock.h" />
-    <ClInclude Include="D:\sdk\我的库\GameEngine\GameEngine\GameEngine.h" />
-    <ClInclude Include="D:\sdk\我的库\GameEngine\GameEngine\InputKey.h" />
-    <ClInclude Include="D:\sdk\我的库\GameEngine\GameEngine\LogSys.h" />
-    <ClInclude Include="D:\sdk\我的库\GameEngine\GameEngine\Render.h" />
-    <ClInclude Include="D:\sdk\我的库\GameEngine\GameEngine\Resource.h" />
-    <ClInclude Include="D:\sdk\我的库\GameEngine\GameEngine\Vec.h" />
-    <ClInclude Include="src\NetWorkUpdata.h" />
+    <ClInclude Include="src\GameData.h" />
+    <ClInclude Include="src\Dialog.h" />
+    <ClInclude Include="include\GameEngine\Clock.h" />
+    <ClInclude Include="include\GameEngine\GameEngine.h" />
+    <ClInclude Include="include\GameEngine\InputKey.h" />
+    <ClInclude Include="include\GameEngine\LogSys.h" />
+    <ClInclude Include="include\GameEngine\Render.h" />
+    <ClInclude Include="include\GameEngine\Resource.h" />
+    <ClInclude Include="include\GameEngine\Vec.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\Snow.h" />
     <ClInclude Include="src\Board.h" />
+    <ClInclude Include="src\Thread_pool.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="D2D2048_v3.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,114 +1,4 @@
-﻿#include <iostream>
-#include "src/Board.h"
-#include "src/NetWorkUpdata.h"
-#include "include/GameEngine/GameEngine.h"
-
-#ifndef _DEBUG
-#pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" )	// 隐藏控制台
-#endif // _DEBUG
-
-
-// 该游戏的版本，如果检测到Network的版本号比它大，就该更新了
-#define VERSION 4
-
-class snow
-{
-public:
-	snow(shu::Direct2dRender& rt)
-		: m_rt(rt)
-	{
-		// 创建位图
-		D2D1_BITMAP_PROPERTIES1 d2d1_bitmap_def = {};
-		d2d1_bitmap_def.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
-		d2d1_bitmap_def.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
-		d2d1_bitmap_def.dpiX = USER_DEFAULT_SCREEN_DPI;
-		d2d1_bitmap_def.dpiY = USER_DEFAULT_SCREEN_DPI;
-		d2d1_bitmap_def.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET;
-		rt.GetDC().CreateBitmap(
-			D2D1::SizeU(100, 100),
-			0, 0,
-			d2d1_bitmap_def,
-			&m_bitmap);
-		rt.GetDC().CreateBitmap(
-			D2D1::SizeU(100, 100),
-			0, 0,
-			d2d1_bitmap_def,
-			&m_bitmap2);
-
-		// 创建高斯模糊特效，为了让雪花更有层次感，雪花越小模糊越强
-		rt.GetDC().CreateEffect(CLSID_D2D1GaussianBlur, &m_GaussianBlur);
-
-		this->Reset();
-	}
-	~snow() {}
-
-	void Reset()
-	{
-		float r = (rand() % 10 + 5);
-		m_radius = r * min(m_rt.GetSize().x, m_rt.GetSize().y) * 0.001f;
-		m_pos = shu::vec2f(rand() % ((int)m_rt.GetSize().x + 1), -100.0f);
-		m_speed = shu::vec2f(rand() % 50 - 25, rand() % 50 + 50 * min(m_rt.GetSize().x, m_rt.GetSize().y) * 0.001f);
-
-		m_life = ((rand() % 100) / 100.0f) + 0.1f;
-		m_white = 0.0f;
-		m_clock.Reset();
-
-		m_rt.GetDC().SetTarget(m_bitmap.Get());
-		m_rt.GetDC().BeginDraw();
-		m_rt.GetDC().Clear(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
-		m_rt.FillCircle(shu::vec2f(50.0f, 50.0f), m_radius, shu::color4f(shu::Color::White));
-		m_rt.GetDC().EndDraw();
-
-		m_GaussianBlur->SetInput(0, m_bitmap.Get());
-		m_GaussianBlur->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, (14 - r) * 0.8f);
-
-		m_rt.GetDC().SetTarget(m_bitmap2.Get());
-		m_rt.GetDC().BeginDraw();
-		m_rt.GetDC().Clear(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
-		m_rt.GetDC().DrawImage(m_GaussianBlur.Get());
-		m_rt.GetDC().EndDraw();
-
-		m_rt.SetRenderTargetToWindow();
-	}
-
-	void Updata(float dt)
-	{
-		m_pos += m_speed * dt;
-
-		if (m_clock.GetTime() >= 2.0f)
-		{
-			m_white -= m_life * dt;
-			if (m_white <= 0.0f) this->Reset();
-		}
-		else
-		{
-			float move = m_clock.GetTime() / 2.0f;
-			m_white = easeInOutBack(move);
-		}
-	}
-	void Render(shu::Direct2dRender& rt)
-	{
-		rt.GetDC().DrawBitmap(
-			m_bitmap2.Get(),
-			D2D1::RectF(m_pos.x, m_pos.y, m_pos.x + m_bitmap2->GetSize().width, m_pos.y + m_bitmap2->GetSize().height),
-			m_white,
-			D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
-	}
-
-private:
-	shu::Direct2dRender& m_rt;
-	ComPtr<ID2D1Bitmap1> m_bitmap;
-	ComPtr<ID2D1Bitmap1> m_bitmap2;
-	ComPtr<ID2D1Effect> m_GaussianBlur;	// 高斯模糊特效
-
-	shu::vec2f m_pos;
-	shu::vec2f m_speed;
-	float m_radius = 0.0f;
-	float m_life = 0.0f;
-
-	Clock m_clock;
-	float m_white = 0.0f;
-};
+﻿#include "main.h"
 
 class MyGame : public shu::GameEngine
 {
@@ -116,19 +6,57 @@ public:
 	virtual bool OnUserCreate() override
 	{ 
 		std::system("chcp 65001");
+		// 设置菜单
+		auto menu = ::LoadMenuW(this->m_hInstance, MAKEINTRESOURCE(IDR_MENU1));
+		SetMenu(this->m_hwnd, menu);
 
 		// 初始化棋盘
-		board = new Board(m_rt);
-		board->InitBoard(4, 4);
+		GameData::Get().board = new Board(m_rt);
+		GameData::Get().board->InitBoard(GameData::Get().Board_Width, GameData::Get().Board_Height);
 
-		// 初始化Network模块
-		m_network = new NetWorkUpdata(is_ok, m_json_data);
-		m_network_thread = std::thread([&]() { m_network->Run(); });
+		GetComputerNameA(PCName, &size);
+
+		// 初始化线程池
+		myTask = new Thread_pool(2);
+		// 请求json配置数据
+		myTask->AddTask([this]() {
+		httplib::Client cli("http://songshu007.gitee.io");
+		httplib::Result res = cli.Get("/backstage/2048/");
+		if (res)
+		{
+			int begin = res->body.find("[####");
+			int end = res->body.find("####]");
+			if (begin >= 0 && end >= 0)
+			{
+				std::string data = res->body.substr(begin + 5, end - begin - 5);
+				std::cout << data << std::endl;
+				this->m_json_data = json::parse(data);
+				this->is_json_ok = true;
+				std::cout << "[" << std::this_thread::get_id() << "]: get json_data success!" << std::endl;
+			}
+		}
+		else
+		{
+			this->is_json_ok = false;
+			std::cout << "[" << std::this_thread::get_id() << "]: get json_data failed!" << std::endl;
+		}
+		});
+
+		// 发送上线消息到服务器
+		myTask->AddTask([this]() {
+		std::stringstream ss;
+		ss << "/backstage/2048/in/" << PCName;
+		httplib::Client cli("http://117.50.181.42:4000");
+		if (cli.Get(ss.str()))
+			std::cout << "[" << std::this_thread::get_id() << "]: send in message success!" << std::endl;
+		else
+			std::cout << "[" << std::this_thread::get_id() << "]: send in message failed!" << std::endl;
+		});
 
 		// 创建渐变画笔
 		this->CreateLinearBrush(shu::vec2f(512.0f, 512.0f));
 
-		m_rt.SetFullscreenState(Full);
+		m_rt.SetFullscreenState(full_screen);
 
 		return true;
 	};
@@ -138,12 +66,14 @@ public:
 		static float all_dt;
 		all_dt += dt;
 
-		// 检查网络请求线程是否请求到数据
+		// 检查任务队列线程是否请求到json配置数据
 		static bool is_first = true;
-		if (is_ok == true)
+		if (this->is_json_ok == true)
 		{
 			if (is_first == true)
 			{
+				is_first = false;
+
 				// 是否有更新
 				if (m_json_data["new-version"].get<int>() > VERSION)
 				{
@@ -173,24 +103,56 @@ public:
 				{
 					// 初始化snow类
 					for (size_t i = 0; i < 100; i++)
-						m_snows.push_back(new snow(m_rt));
+						m_snows.push_back(new Snow(m_rt));
 				}
-
-				is_first = false;
 			}
 		}
 
-		if (shu::InputKey::GetKeyStatus(shu::Key::W).isPress) board->Move(UP);
-		if (shu::InputKey::GetKeyStatus(shu::Key::S).isPress) board->Move(DOWN);
-		if (shu::InputKey::GetKeyStatus(shu::Key::A).isPress) board->Move(LEFT);
-		if (shu::InputKey::GetKeyStatus(shu::Key::D).isPress) board->Move(RIGHT);
+		if (shu::InputKey::GetKeyStatus(shu::Key::W).isPress || shu::InputKey::GetKeyStatus(shu::Key::UP).isPress) GameData::Get().board->Move(UP);
+		if (shu::InputKey::GetKeyStatus(shu::Key::S).isPress || shu::InputKey::GetKeyStatus(shu::Key::DOWN).isPress) GameData::Get().board->Move(DOWN);
+		if (shu::InputKey::GetKeyStatus(shu::Key::A).isPress || shu::InputKey::GetKeyStatus(shu::Key::LEFT).isPress) GameData::Get().board->Move(LEFT);
+		if (shu::InputKey::GetKeyStatus(shu::Key::D).isPress || shu::InputKey::GetKeyStatus(shu::Key::RIGHT).isPress) GameData::Get().board->Move(RIGHT);
+#ifdef _DEBUG
+		if (shu::InputKey::GetKeyStatus(shu::Key::T).isPress) GameData::Get().board->Test();
+#endif // _DEBUG
+		
 
-		if (shu::InputKey::GetKeyStatus(shu::Key::R).isPress) board->Reset();
-		if (shu::InputKey::GetKeyStatus(shu::Key::T).isPress) board->Test();
+		if (shu::InputKey::GetKeyStatus(shu::Key::R).isPress)
+		{
+			GameData::Get().board->Reset();
+			m_is_win = false;
+			m_last_is_win = false;
+		}
 		if (shu::InputKey::GetKeyStatus(shu::Key::F).isPress)
 		{
-			Full = !Full;
-			m_rt.SetFullscreenState(Full);
+			full_screen = !full_screen;
+			m_rt.SetFullscreenState(full_screen);
+		}
+		if (shu::InputKey::GetKeyStatus(shu::Key::ESCAPE).isPress)
+		{
+			if (full_screen == true)
+			{
+				full_screen = false;
+				m_rt.SetFullscreenState(false);
+			}
+		}
+
+		m_last_is_win = m_is_win;
+		m_is_win = GameData::Get().board->isWin();
+
+		// send win message only once!!
+		if (m_last_is_win == false && m_is_win == true)
+		{
+			// 发送胜利的消息到服务器
+			myTask->AddTask([this]() {
+			std::stringstream ss;
+			ss << "/backstage/2048/win/" << PCName;
+			httplib::Client cli("http://117.50.181.42:4000");
+			if (cli.Get(ss.str()))
+				std::cout << "[" << std::this_thread::get_id() << "]: send win message success!" << std::endl;
+			else
+				std::cout << "[" << std::this_thread::get_id() << "]: send win message failed!" << std::endl;
+			});
 		}
 
 		last_win_size = win_size;
@@ -198,13 +160,12 @@ public:
 		// 当窗口大小改变时
 		if (win_size != last_win_size)
 		{
-			board->ChangeSize(win_size);
-
+			GameData::Get().board->ChangeSize(win_size);
 			this->CreateLinearBrush(m_rt.GetSize());
 		}
 
 		// 更新棋盘
-		board->Updata(dt);
+		GameData::Get().board->Updata(dt);
 
 		// 更新雪花
 		if (is_show_snow == true)
@@ -217,28 +178,63 @@ public:
 
 		// 绘制
 		m_rt.BeginDraw();
-
 		m_rt.FillRect(shu::vec2f(0.0f, 0.0f), m_rt.GetSize(), m_pLinearGradientBrush.Get());
-
 		if (is_show_snow == true)
 		{
 			for (auto& it : m_snows)
 				it->Render(m_rt);
 		}
-
-		board->Render(m_rt, false);
-
+		GameData::Get().board->Render(m_rt, false);
 		m_rt.EndDraw();
+
+		return true; 
+	};
+
+	virtual bool OnMenuUpdata(WORD options)
+	{ 
+		if (options == ID_ABOUT)
+		{
+			DialogBoxW(this->m_hInstance, MAKEINTRESOURCEW(IDD_ABOUT), this->m_hwnd, (DLGPROC)Dlg_About);
+		}
+		if (options == ID_SIZE)
+		{
+			DialogBoxW(this->m_hInstance, MAKEINTRESOURCEW(IDD_SIZE), this->m_hwnd, (DLGPROC)Dlg_Size);
+		}
+		if (options == ID_AGAIN)
+		{
+			GameData::Get().board->Reset();
+			m_is_win = false;
+			m_last_is_win = false;
+		}
+		if (options == ID_FULL)
+		{
+			full_screen = !full_screen;
+			m_rt.SetFullscreenState(full_screen);
+		}
 
 		return true; 
 	};
 
 	virtual bool OnDisCreate() override
 	{
-		delete board;
+		// 发送下线消息到服务器
+		myTask->AddTask([this]() {
+		std::stringstream ss;
+		ss << "/backstage/2048/out/" << PCName;
+		httplib::Client cli("http://117.50.181.42:4000");
+		if (cli.Get(ss.str()))
+			std::cout << "[" << std::this_thread::get_id() << "]: send out message success!" << std::endl;
+		else
+			std::cout << "[" << std::this_thread::get_id() << "]: send out message failed!" << std::endl;
+		});
+
+		// 关掉任务队列（阻塞等待所有任务完成）
+		myTask->Close();
+		delete myTask;
+
 		for (auto& it : m_snows) delete it;
-		if (m_network_thread.joinable()) m_network_thread.join();
-		delete m_network;
+		m_snows.clear();
+
 		return true;
 	}
 
@@ -251,7 +247,7 @@ public:
 		D2D1::ColorF beginC = TO_D2D1_COLORF(187, 173, 160, 255);
 		D2D1::ColorF endC = TO_D2D1_COLORF(187, 173, 160, 255);
 
-		if (is_ok == true)
+		if (this->is_json_ok == true)
 		{
 			beginC.r = m_json_data["up-color"][0].get<float>() / 255.;
 			beginC.g = m_json_data["up-color"][1].get<float>() / 255.;
@@ -288,23 +284,23 @@ public:
 		pGradientStops->Release();
 	}
 
+public:
 
-private:
+	ComPtr<ID2D1LinearGradientBrush> m_pLinearGradientBrush;  // 线性渐变画笔
+	std::vector<Snow*> m_snows;       // 雪花背景
 
-	ComPtr<ID2D1LinearGradientBrush> m_pLinearGradientBrush;	// 线性渐变画笔
+	Thread_pool* myTask = nullptr;    // 线程池，用来进行网络请求
 
-	std::vector<snow*> m_snows;   // 雪花背景
+	std::atomic<bool> is_json_ok = false; // 请求json数据是否完成
+	json m_json_data;               // json配置数据
+	bool is_show_snow = false;      // 是否显示雪花
+	bool is_black_white = false;    // 是否黑白
+	bool full_screen = false;       // 是否全屏
+	CHAR PCName[255];	            // 玩家的电脑名称
+	unsigned long size = 255;
 
-	std::atomic<bool> is_ok = false;	// Http请求是否完成
-	bool is_show_snow = false;	// 是否显示雪花
-	bool is_black_white = false;	// 是否黑白
-	bool Full = false;
-
-	json m_json_data;
-	NetWorkUpdata* m_network = nullptr;
-	std::thread m_network_thread;
-
-	Board* board = nullptr;
+	bool m_is_win = false;
+	bool m_last_is_win = false;
 
 	shu::vec2i win_size = shu::vec2i(0, 0);
 	shu::vec2i last_win_size = shu::vec2i(0, 0);
@@ -314,7 +310,10 @@ int main()
 {
 	srand(time(NULL));
 	MyGame ge;
-	if (ge.Init(L"Game", L"2048", { 600, 600 }))
+
+	// 初始化
+	// 类名，窗口名称，窗口大小，样式（可选）
+	if (ge.Init(L"Game", L"2048", { 600, 600 }, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN))
 		ge.Start();
 
 	return 0;

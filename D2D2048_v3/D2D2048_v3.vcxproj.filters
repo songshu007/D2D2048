@@ -14,63 +14,87 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="GameEngine">
-      <UniqueIdentifier>{1ae77f92-1bc3-4366-a620-7d6ffbf4b240}</UniqueIdentifier>
+      <UniqueIdentifier>{4e2d5130-0e38-49b5-8a00-726641d6f64b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Board.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\NetWorkUpdata.cpp">
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\Snow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="D:\sdk\我的库\GameEngine\GameEngine\GameEngine.cpp">
+    <ClCompile Include="include\GameEngine\InputKey.cpp">
       <Filter>GameEngine</Filter>
     </ClCompile>
-    <ClCompile Include="D:\sdk\我的库\GameEngine\GameEngine\InputKey.cpp">
+    <ClCompile Include="include\GameEngine\LogSys.cpp">
       <Filter>GameEngine</Filter>
     </ClCompile>
-    <ClCompile Include="D:\sdk\我的库\GameEngine\GameEngine\LogSys.cpp">
+    <ClCompile Include="include\GameEngine\Render.cpp">
       <Filter>GameEngine</Filter>
     </ClCompile>
-    <ClCompile Include="D:\sdk\我的库\GameEngine\GameEngine\Render.cpp">
+    <ClCompile Include="include\GameEngine\Resource.cpp">
       <Filter>GameEngine</Filter>
     </ClCompile>
-    <ClCompile Include="D:\sdk\我的库\GameEngine\GameEngine\Resource.cpp">
+    <ClCompile Include="include\GameEngine\Clock.cpp">
       <Filter>GameEngine</Filter>
     </ClCompile>
-    <ClCompile Include="D:\sdk\我的库\GameEngine\GameEngine\Clock.cpp">
+    <ClCompile Include="include\GameEngine\GameEngine.cpp">
       <Filter>GameEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Thread_pool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameData.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Board.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\NetWorkUpdata.h">
+    <ClInclude Include="src\Snow.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="D:\sdk\我的库\GameEngine\GameEngine\GameEngine.h">
+    <ClInclude Include="include\GameEngine\InputKey.h">
       <Filter>GameEngine</Filter>
     </ClInclude>
-    <ClInclude Include="D:\sdk\我的库\GameEngine\GameEngine\InputKey.h">
+    <ClInclude Include="include\GameEngine\LogSys.h">
       <Filter>GameEngine</Filter>
     </ClInclude>
-    <ClInclude Include="D:\sdk\我的库\GameEngine\GameEngine\LogSys.h">
+    <ClInclude Include="include\GameEngine\Render.h">
       <Filter>GameEngine</Filter>
     </ClInclude>
-    <ClInclude Include="D:\sdk\我的库\GameEngine\GameEngine\Render.h">
+    <ClInclude Include="include\GameEngine\Resource.h">
       <Filter>GameEngine</Filter>
     </ClInclude>
-    <ClInclude Include="D:\sdk\我的库\GameEngine\GameEngine\Resource.h">
+    <ClInclude Include="include\GameEngine\Vec.h">
       <Filter>GameEngine</Filter>
     </ClInclude>
-    <ClInclude Include="D:\sdk\我的库\GameEngine\GameEngine\Vec.h">
+    <ClInclude Include="include\GameEngine\Clock.h">
       <Filter>GameEngine</Filter>
     </ClInclude>
-    <ClInclude Include="D:\sdk\我的库\GameEngine\GameEngine\Clock.h">
+    <ClInclude Include="include\GameEngine\GameEngine.h">
       <Filter>GameEngine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Thread_pool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h" />
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Dialog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameData.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="D2D2048_v3.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

@@ -19,6 +19,7 @@ void shu::InputKey::UpdataKeyStatus(uint32_t key, bool status)
 void shu::InputKey::Updata()
 {
 	// ¸üÐÂ°´¼ü×´Ì¬
+	ptr->m_IsAnyKeyPress = false;
 	for (auto i = 0; i < 256; i++)
 	{
 		if (ptr->m_KeyNewState[i] != ptr->m_KeyOldState[i])
@@ -27,6 +28,7 @@ void shu::InputKey::Updata()
 			{
 				ptr->m_KeyboardState[i].isHold = true;
 				ptr->m_KeyboardState[i].isPress = true;
+				ptr->m_IsAnyKeyPress = true;
 			}
 			else
 			{
@@ -46,4 +48,9 @@ void shu::InputKey::Updata()
 shu::KeyStatus& shu::InputKey::GetKeyStatus(Key key)
 {
 	return ptr->m_KeyboardState[(uint32_t)key];
+}
+
+bool shu::InputKey::IsAnyKeyPress()
+{
+	return ptr->m_IsAnyKeyPress;
 }

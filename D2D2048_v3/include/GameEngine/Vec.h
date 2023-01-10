@@ -2,7 +2,7 @@
 #include <iostream>
 #define PI 3.14159265
 
-#define TO_SHU_COLORF(r, g, b, a) color4f(r/255.,g/255.,b/255.,a/255.)
+#define TO_SHU_COLORF(r, g, b, a) shu::color4f(r/255.,g/255.,b/255.,a/255.)
 #define TO_D2D1_COLORF(r, g, b, a) D2D1::ColorF(r/255.,g/255.,b/255.,a/255.)
 
 namespace shu
@@ -107,7 +107,8 @@ namespace shu
 			White(1.0f, 1.0f, 1.0f),
 			Yellow(1.0f, 1.0f, 0.0f),
 			Black(0.0f, 0.0f, 0.0f),
-			Orange(1.0f, 0.49f, 0.0f)
+			Orange(1.0f, 0.49f, 0.0f),
+			Little_Black(0.94f, 0.94f, 0.94f)
 			
 			
 			;

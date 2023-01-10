@@ -12,8 +12,8 @@ bool shu::Direct2dRender::Init(HWND hwnd)
 	hr = CoInitialize(NULL);
 	if (FAILED(hr)) return false;
 
-	// 创建 D2D Factory（多线程工厂）
-	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, __uuidof(ID2D1Factory1), (void**)&m_d2dFactory);
+	// 创建 D2D Factory（单线程工厂）
+	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory1), (void**)&m_d2dFactory);
 	if (FAILED(hr)) return false;
 
 	// 创建 D3D Device 和 D3D DeviceContext
@@ -104,8 +104,6 @@ bool shu::Direct2dRender::Init(HWND hwnd)
 
 	// 设置抗锯齿
 	m_d2dDeviceContext->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
-
-	m_d2dFactory.As(&m_D2DMultithread);
 
 	return true;
 }
@@ -256,10 +254,8 @@ void shu::Direct2dRender::EndDraw()
 {
 	HRESULT hr = S_OK;
 
-	m_D2DMultithread->Enter();
 	hr = this->m_d2dDeviceContext->EndDraw();
 	hr = this->m_dxgiSwapChain->Present(1, 0);
-	m_D2DMultithread->Leave();
 }
 
 bool shu::Direct2dRender::LoadBitmapFromFile(std::wstring file, ID2D1Bitmap1** Bitmap)
@@ -316,7 +312,6 @@ void shu::Direct2dRender::ChangeSize(uint32_t width, uint32_t height)
 
 	m_size.x = (float)width; m_size.y = (float)height;
 
-	m_D2DMultithread->Enter();
 	this->m_d2dDeviceContext->SetTarget(NULL);
 	// 解除所有与 SwapChain 的绑定
 	if (this->m_d3dDeviceContext)
@@ -332,7 +327,6 @@ void shu::Direct2dRender::ChangeSize(uint32_t width, uint32_t height)
 
 	this->CreateRenderTarget();
 	this->m_d2dDeviceContext->SetTarget(this->m_d2dTarget.Get());
-	m_D2DMultithread->Leave();
 }
 
 void shu::Direct2dRender::SetFullscreenState(bool flag)
@@ -342,9 +336,7 @@ void shu::Direct2dRender::SetFullscreenState(bool flag)
 
 void shu::Direct2dRender::SetRenderTargetToWindow()
 {
-	m_D2DMultithread->Enter();
 	this->m_d2dDeviceContext->SetTarget(this->m_d2dTarget.Get());
-	m_D2DMultithread->Leave();
 }
 
 ID2D1DeviceContext& shu::Direct2dRender::GetDC()
