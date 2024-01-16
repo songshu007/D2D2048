@@ -27,7 +27,7 @@
 using json = nlohmann::json;
 
 // 该游戏的版本，如果检测到后台的版本号比它大，就该更新了
-#define VERSION 5
+#define VERSION 6
 
 #ifndef _DEBUG
 #pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" )	// 隐藏控制台
