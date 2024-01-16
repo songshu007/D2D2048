@@ -95,6 +95,4 @@ static INT_PTR Dlg_Size(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 
 	return FALSE;
-
-
 }

@@ -63,10 +63,28 @@ public:
 
 	virtual bool OnUserUpdata(float dt) override
 	{
+		// 临时
+		/*if (HIMC himc = ::ImmGetContext(this->m_hwnd))
+		{
+			COMPOSITIONFORM composition_form = {};
+			composition_form.ptCurrentPos.x = this->GetMousePos().x;
+			composition_form.ptCurrentPos.y = this->GetMousePos().y;
+			composition_form.dwStyle = CFS_FORCE_POSITION;
+			::ImmSetCompositionWindow(himc, &composition_form);
+			CANDIDATEFORM candidate_form = {};
+			candidate_form.dwStyle = CFS_CANDIDATEPOS;
+			candidate_form.ptCurrentPos.x = this->GetMousePos().x;
+			candidate_form.ptCurrentPos.y = this->GetMousePos().y;
+			::ImmSetCandidateWindow(himc, &candidate_form);
+			::ImmReleaseContext(m_hwnd, himc);
+		}*/
+
+
+
 		static float all_dt;
 		all_dt += dt;
 
-		// 检查任务队列线程是否请求到json配置数据
+		// 检查线程池是否请求到json配置数据
 		static bool is_first = true;
 		if (this->is_json_ok == true)
 		{
@@ -106,6 +124,23 @@ public:
 						m_snows.push_back(new Snow(m_rt));
 				}
 			}
+		}
+
+		if (shu::InputKey::GetKeyStatus(shu::Key::LBUTTON).isPress)
+		{
+			m_lbtn_press = true;
+			lbtn_press_pos = this->GetMousePos();
+		}
+			
+		if (shu::InputKey::GetKeyStatus(shu::Key::LBUTTON).isRelease && m_lbtn_press == true)
+		{
+			m_lbtn_press = false;
+			lbtn_release_pos = this->GetMousePos();
+
+			if ((lbtn_press_pos.y - lbtn_release_pos.y) > 100.0f) GameData::Get().board->Move(UP);
+			if ((lbtn_release_pos.y - lbtn_press_pos.y) > 100.0f) GameData::Get().board->Move(DOWN);
+			if ((lbtn_press_pos.x - lbtn_release_pos.x) > 100.0f) GameData::Get().board->Move(LEFT);
+			if ((lbtn_release_pos.x - lbtn_press_pos.x) > 100.0f) GameData::Get().board->Move(RIGHT);
 		}
 
 		if (shu::InputKey::GetKeyStatus(shu::Key::W).isPress || shu::InputKey::GetKeyStatus(shu::Key::UP).isPress) GameData::Get().board->Move(UP);
@@ -244,8 +279,9 @@ public:
 
 		ID2D1GradientStopCollection* pGradientStops = NULL;
 		
-		D2D1::ColorF beginC = TO_D2D1_COLORF(187, 173, 160, 255);
-		D2D1::ColorF endC = TO_D2D1_COLORF(187, 173, 160, 255);
+		// 187, 173, 160, 255
+		D2D1::ColorF beginC = TO_D2D1_COLORF(228, 97, 19, 255);
+		D2D1::ColorF endC = TO_D2D1_COLORF(228, 97, 19, 255);
 
 		if (this->is_json_ok == true)
 		{
@@ -301,6 +337,10 @@ public:
 
 	bool m_is_win = false;
 	bool m_last_is_win = false;
+	bool m_lbtn_press = false;
+
+	shu::vec2f lbtn_press_pos;
+	shu::vec2f lbtn_release_pos;
 
 	shu::vec2i win_size = shu::vec2i(0, 0);
 	shu::vec2i last_win_size = shu::vec2i(0, 0);
@@ -313,7 +353,7 @@ int main()
 
 	// 初始化
 	// 类名，窗口名称，窗口大小，样式（可选）
-	if (ge.Init(L"Game", L"2048", { 600, 600 }, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN))
+	if (ge.Init(L"Game", L"2048", { 600, 600 }, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_EX_CONTROLPARENT))
 		ge.Start();
 
 	return 0;

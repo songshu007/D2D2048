@@ -111,6 +111,14 @@ LRESULT shu::GameEngine::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 		ptr.OnMenuUpdata(LOWORD(wParam));
 		break;
 	}
+	case WM_CHAR:
+	case WM_SYSCHAR:
+	{
+		char ch = (char)wParam;
+		printf("%c\n", wParam);
+
+		break;
+	}
 	}
 
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -161,7 +169,9 @@ HWND shu::GameEngine::_CreateWindow(vec2i size, long style)
 	rect.top = 0;
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
 
-	hwnd = CreateWindowEx(0, (LPCWSTR)m_ClassName.c_str(), (LPCWSTR)m_WindowName.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, rect.right - rect.left, rect.bottom - rect.top, NULL, NULL, m_hInstance, NULL);
+	hwnd = CreateWindowEx(0, (LPCWSTR)m_ClassName.c_str(), (LPCWSTR)m_WindowName.c_str(), 
+		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 
+		rect.right - rect.left, rect.bottom - rect.top, NULL, NULL, m_hInstance, NULL);
 	return hwnd;
 }
 

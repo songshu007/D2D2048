@@ -1,0 +1,19 @@
+﻿  main.cpp
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\src\Board.h(26,19): warning C4305: “初始化”: 从“double”到“float”截断
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\src\Board.h(27,22): warning C4305: “初始化”: 从“double”到“float”截断
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\main.cpp(27,14): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\main.cpp(28,12): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\main.cpp(195,69): warning C4244: “参数”: 从“float”转换到“int”，可能丢失数据
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\main.cpp(195,45): warning C4244: “参数”: 从“float”转换到“int”，可能丢失数据
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\main.cpp(284,25): warning C4305: “参数”: 从“double”到“FLOAT”截断
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\main.cpp(285,23): warning C4305: “参数”: 从“double”到“FLOAT”截断
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\main.cpp(289,55): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\main.cpp(290,55): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\main.cpp(291,55): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\main.cpp(292,55): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\main.cpp(294,55): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\main.cpp(295,55): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\main.cpp(296,55): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\main.cpp(297,55): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+C:\Users\Lenovo\source\repos\D2D2048_v3\D2D2048_v3\main.cpp(352,12): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
+  D2D2048_v3.vcxproj -> C:\Users\Lenovo\source\repos\D2D2048_v3\x64\Debug\D2D2048_v3.exe

@@ -1,5 +1,6 @@
 #pragma once
-// 以免 Win32 的控件是 Win98 样式的
+
+// 现代化Win32控件
 #ifdef _UNICODE
 #if defined _M_IX86
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -31,6 +32,8 @@ using json = nlohmann::json;
 #ifndef _DEBUG
 #pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" )	// 隐藏控制台
 #endif // _DEBUG
+
+#pragma comment(lib, "Imm32.lib")
 
 // string -> wstring（注意！此函数在c++17中不可用 需要添加 #define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING 宏定义）
 static std::wstring to_wide_string(const std::string& input)

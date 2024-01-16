@@ -22,6 +22,12 @@ void Board::InitBoard(int rows, int cols)
 	m_board = CreateNewBoard(rows, cols);
 	m_last_board = CreateNewBoard(rows, cols);
 
+
+	/*m_board[0][0] = 1;
+	m_board[0][1] = 1;
+	m_board[0][2] = 2;
+	m_board[0][3] = 2;*/
+
 	// 随机生成一个棋子
 	RandCreateCell(m_board, m_rows, m_cols);
 }
@@ -717,6 +723,8 @@ int Board::left(int** board, int rows, int cols)
 
 			last_add = ApplyMove(board, rows, cols, begin_pos, end_pos, dir, last_add);
 			temp_score += last_add;
+
+			PrintfBoard(m_board, m_rows, m_cols);
 		}
 	}
 	return temp_score;

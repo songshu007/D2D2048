@@ -36,16 +36,6 @@ static float easeInOutCirc(float t)
 		? (1 - sqrt(1 - pow(2 * t, 2))) / 2
 		: (sqrt(1 - pow(-2 * t + 2, 2)) + 1) / 2);
 }
-static float easeOutElastic(float t)
-{
-	const float c4 = (2 * PI) / 3;
-
-	return t == 0
-		? 0
-		: t == 1
-		? 1
-		: pow(2, -10 * t) * sin((t * 10 - 0.75) * c4) + 1;
-}
 
 using namespace shu;
 
@@ -110,6 +100,19 @@ private:
 	int down(int** board, int rows, int cols);
 	int left(int** board, int rows, int cols);
 	int right(int** board, int rows, int cols);
+
+	void PrintfBoard(int** board, int rows, int cols)
+	{
+		std::cout << "====================\n";
+		for (int y = 0; y < rows; y++)
+		{
+			for (int x = 0; x < cols; x++)
+			{
+				std::cout << board[y][x] << "  ";
+			}
+			std::cout << "\n";
+		}
+	}
 
 	shu::color4f& GetColor(int num);
 
